@@ -39,6 +39,6 @@ import csv
 
 with open('products.csv', 'r') as f:
     data = csv.DictReader(f)
-    for row in list(data):
+    for row in list(data): 
         print(row)
         print()

@@ -1,7 +1,9 @@
+import csv
 
 class Products():
 
     all_products = []
+    all_bills = []
     def __init__(self, brand, model, units, mrp, dealerPrice = 0):
         assert brand.__class__.__name__ == 'str', f'Please enter string only'
         assert model.__class__.__name__ == 'str', f'Please enter string only'
@@ -51,4 +53,37 @@ class Products():
 
     @classmethod
     def import_from_csv(cls):
-        pass
+        with open('products.csv') as f:
+            data = csv.DictReader(f)
+            for row in data:
+                cls(row["brand"], row["category"], int(row["units"]), float(row["mrp"]), float(row["dealer price"]))
+
+    @staticmethod
+    def generateBill():
+        current_bill = []
+        print("Enter the quantity sold:")
+        for product in Products.all_products:
+            product.sold = int(input(f'{product.brand} - {product.model}: '))
+            billing_price = product.sold * product.mrp
+            profit = product.sold * product.profit
+            current_bill.append((product.brand, product.model, product.sold, product.mrp, billing_price, profit))
+        # print(current_bill)
+        Products.all_bills.append(current_bill)
+        print()
+        print("Your Bill".center(70, "-"))
+        print("Sr.No\t" + "Name\t".expandtabs(30) + "Qty\t" + "Rate\tAmount".expandtabs(10))
+        i = 1
+        total = 0
+        for item in current_bill:
+            if item[2] != 0:
+                print(f"{i}\t" + f"{item[1]}-{item[0]}\t".expandtabs(30) + f"{item[2]}\t".expandtabs(10) + f"{item[3]}\t{item[4]}".expandtabs(10))
+                i += 1
+                total += item[4]
+
+        print("-"*70)
+        print(f"{total}".rjust(65))
+
+if __name__ == "__main__":
+    Products.import_from_csv()
+    # print(Products.all_products)
+    Products.generateBill()
